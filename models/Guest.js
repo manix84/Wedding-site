@@ -16,10 +16,55 @@ var Guest = function () {
 		 */
 		uppercase: function (string) {
 			return string.replace(/^([a-z])/, function ($1) { return $1.toUpperCase(); });
+		},
+
+		getDatabase: function () {
+			var mongo = require('mongodb'),
+				server = new mongo.Server('localhost', 27017, {auto_reconnect: true}),
+				db = new mongo.Db('wedding', server);
+
+			return db;
+		},
+
+		getCollection: function (callback, db) {
+			db = db || methods.getDatabase();
+
+			db.open(function (err, db) {
+				if (!err) {
+					db.createCollection('guests', function (err, collection) {
+						callback(err, collection, db);
+					});
+				}
+			});
 		}
 	};
 
 	return {
+		save: function (callback) {
+			methods.getCollection(function (err, collection, db) {
+				collection.update({id: properties.id}, properties, {upsert: true});
+				db.close();
+				callback();
+			});
+		},
+
+		load: function (id, callback) {
+			methods.getCollection(function (err, collection, db) {
+				collection.findOne({id: id}, function (err, item) {
+					var key;
+					if (!err) {
+						for (key in item) {
+							if (properties.hasOwnProperty(key)) {
+								properties[key] = item[key];
+							}
+						}
+					}
+					db.close();
+					callback();
+				});
+			});
+		},
+
 		/**
 		 * Validates email address and assigns it to the guest
 		 * @param {String} email
