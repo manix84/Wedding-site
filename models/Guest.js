@@ -3,7 +3,9 @@ var Guest = function () {
 		id: null,
 		firstname: '',
 		lastname: '',
-		email: ''
+		email: '',
+		fb: '',
+		twitter: ''
 	},
 		methods = {
 		uppercase: function (string) {
@@ -18,6 +20,14 @@ var Guest = function () {
 			}
 
 			return false;
+		},
+
+		setTwitter: function (handle) {
+			if (handle[0] !== '@') {
+				handle = '@' + handle;
+			}
+			
+			return properties.twitter = handle;
 		},
 
 		get: function (property) {
