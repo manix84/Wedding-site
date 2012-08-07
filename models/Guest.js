@@ -5,7 +5,8 @@ var Guest = function () {
 		lastname: '',
 		email: '',
 		fb: '',
-		twitter: ''
+		twitter: '',
+		rsvp: false
 	},
 		methods = {
 		uppercase: function (string) {
@@ -26,28 +27,36 @@ var Guest = function () {
 			if (handle[0] !== '@') {
 				handle = '@' + handle;
 			}
-			
+
 			return properties.twitter = handle;
+		},
+
+		setRsvp: function (state) {
+			return properties.rsvp = !!state;
 		},
 
 		get: function (property) {
 			var ucProperty = methods.uppercase(property);
+
 			if (this['get' + ucProperty]) {
 				return this['get' + ucProperty]();
 			} else if (property in properties) {
 				return properties[property];
 			}
+
 			return null;
 		},
 
 		set: function (property, value) {
 			var ucProperty = methods.uppercase(property);
+
 			if (this['set' + ucProperty]) {
 				return this['set' + ucProperty](value);
 			} else if (property in properties) {
 				return properties[property] = value;
 			}
-			return null;
+
+			return false;
 		}
 	};
 };
