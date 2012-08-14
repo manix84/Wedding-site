@@ -76,7 +76,6 @@ var Guest = function () {
 		 */
 		load: function (id, callback) {
 			methods.getCollection(function (err, collection, db) {
-				collection.findOne({id: id}, function (err, item) {
 					var key;
 					if (!err) {
 						for (key in item) {
