@@ -1,4 +1,8 @@
 var Guest = function () {
+	/**
+	 * Private properties
+	 * @type {Object}
+	 */
 	var properties = {
 		id: null,
 		firstname: '',
@@ -8,6 +12,10 @@ var Guest = function () {
 		twitter: '',
 		rsvp: false
 	},
+	/**
+	 * Private methods
+	 * @type {Object}
+	 */
 		methods = {
 		/**
 		 * Uppercase first letter of a string
@@ -18,6 +26,10 @@ var Guest = function () {
 			return string.replace(/^([a-z])/, function ($1) { return $1.toUpperCase(); });
 		},
 
+		/**
+		 * Get a mongoDB database instance
+		 * @return {Object} new mongo.Db()
+		 */
 		getDatabase: function () {
 			var mongo = require('mongodb'),
 				server = new mongo.Server('localhost', 27017, {auto_reconnect: true}),
@@ -26,6 +38,11 @@ var Guest = function () {
 			return db;
 		},
 
+		/**
+		 * Get a db collection, creating it if it doesnt exist
+		 * @param  {Function} callback Callback method to run after getting collection
+		 * @param  {Object}   db       Mongo DB instance
+		 */
 		getCollection: function (callback, db) {
 			db = db || methods.getDatabase();
 
@@ -40,6 +57,10 @@ var Guest = function () {
 	};
 
 	return {
+		/**
+		 * Save a Guest object into the database
+		 * @param  {Function} callback Function to call on save
+		 */
 		save: function (callback) {
 			methods.getCollection(function (err, collection, db) {
 				collection.update({id: properties.id}, properties, {upsert: true});
@@ -48,6 +69,11 @@ var Guest = function () {
 			});
 		},
 
+		/**
+		 * Load a Guest from the database
+		 * @param  {String}   id       Email address of the guest to load
+		 * @param  {Function} callback Function to execute after load
+		 */
 		load: function (id, callback) {
 			methods.getCollection(function (err, collection, db) {
 				collection.findOne({id: id}, function (err, item) {
