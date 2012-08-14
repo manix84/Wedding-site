@@ -23,7 +23,7 @@ var Guest = function () {
 		 * @return {String}
 		 */
 		uppercase: function (string) {
-			return string.replace(/^([a-z])/, function ($1) { return $1.toUpperCase(); });
+			return (string && typeof string === "string") ? string[0].toUpperCase() + string.substr(1) : string;
 		},
 
 		/**
