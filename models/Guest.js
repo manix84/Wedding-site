@@ -4,7 +4,6 @@ var Guest = function () {
 	 * @type {Object}
 	 */
 	var properties = {
-		id: null,
 		firstname: '',
 		lastname: '',
 		email: '',
@@ -63,9 +62,12 @@ var Guest = function () {
 		 */
 		save: function (callback) {
 			methods.getCollection(function (err, collection, db) {
-				collection.update({id: properties.id}, properties, {upsert: true});
-				db.close();
-				callback();
+				collection.update({email: properties.email}, {$set: properties}, {upsert: true}, function (err, result) {
+					db.close();
+					if (callback && typeof callback === 'function') {
+						callback();
+					}
+				});
 			});
 		},
 
@@ -76,6 +78,7 @@ var Guest = function () {
 		 */
 		load: function (id, callback) {
 			methods.getCollection(function (err, collection, db) {
+				collection.findOne({email: id}, function (err, item) {
 					var key;
 					if (!err) {
 						for (key in item) {
@@ -85,7 +88,9 @@ var Guest = function () {
 						}
 					}
 					db.close();
-					callback();
+					if (callback && typeof callback === 'function') {
+						callback();
+					}
 				});
 			});
 		},
