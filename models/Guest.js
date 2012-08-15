@@ -3,7 +3,8 @@ var Guest = function () {
 	 * Private properties
 	 * @type {Object}
 	 */
-	var properties = {
+	var Base = require('Base')(),
+		properties = {
 		firstname: '',
 		lastname: '',
 		email: '',
@@ -16,15 +17,6 @@ var Guest = function () {
 	 * @type {Object}
 	 */
 		methods = {
-		/**
-		 * Uppercase first letter of a string
-		 * @param  {String} string
-		 * @return {String}
-		 */
-		uppercase: function (string) {
-			return (string && typeof string === "string") ? string[0].toUpperCase() + string.substr(1) : string;
-		},
-
 		/**
 		 * Get a mongoDB database instance
 		 * @return {Object} new mongo.Db()
@@ -55,7 +47,7 @@ var Guest = function () {
 		}
 	};
 
-	return {
+	return Base.extend({
 		/**
 		 * Save a Guest object into the database
 		 * @param  {Function} callback Function to call on save
@@ -125,46 +117,8 @@ var Guest = function () {
 		 */
 		setRsvp: function (state) {
 			return properties.rsvp = !!state;
-		},
-
-		/**
-		 * Magic getter, will execute get{Property} function if exists. Otherwise returns
-		 * property.
-		 *
-		 * @param  {String} property Property to get
-		 * @return {Mixed}
-		 */
-		get: function (property) {
-			var ucProperty = methods.uppercase(property);
-
-			if (this['get' + ucProperty]) {
-				return this['get' + ucProperty]();
-			} else if (property in properties) {
-				return properties[property];
-			}
-
-			return null;
-		},
-
-		/**
-		 * Magic setter, will execute set{Property} if exists.
-		 *
-		 * @param {String} property Property to set
-		 * @param {Mixed} value
-		 * @return {Boolean} true on successful set, false on failure
-		 */
-		set: function (property, value) {
-			var ucProperty = methods.uppercase(property);
-
-			if (this['set' + ucProperty]) {
-				return this['set' + ucProperty](value);
-			} else if (property in properties) {
-				return properties[property] = value;
-			}
-
-			return false;
 		}
-	};
+	});
 };
 
 module.exports = Guest;
