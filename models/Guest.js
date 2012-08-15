@@ -4,48 +4,20 @@ var Guest = function () {
 	 * @type {Object}
 	 */
 	var Base = require('Base')(),
+		Database = require('Database')(),
 		properties = {
-		firstname: '',
-		lastname: '',
-		email: '',
-		fb: '',
-		twitter: '',
-		rsvp: false
-	},
+			firstname: '',
+			lastname: '',
+			email: '',
+			fb: '',
+			twitter: '',
+			rsvp: false
+		},
 	/**
 	 * Private methods
 	 * @type {Object}
 	 */
-		methods = {
-		/**
-		 * Get a mongoDB database instance
-		 * @return {Object} new mongo.Db()
-		 */
-		getDatabase: function () {
-			var mongo = require('mongodb'),
-				server = new mongo.Server('localhost', 27017, {auto_reconnect: true}),
-				db = new mongo.Db('wedding', server);
-
-			return db;
-		},
-
-		/**
-		 * Get a db collection, creating it if it doesnt exist
-		 * @param  {Function} callback Callback method to run after getting collection
-		 * @param  {Object}   db       Mongo DB instance
-		 */
-		getCollection: function (callback, db) {
-			db = db || methods.getDatabase();
-
-			db.open(function (err, db) {
-				if (!err) {
-					db.createCollection('guests', function (err, collection) {
-						callback(err, collection, db);
-					});
-				}
-			});
-		}
-	};
+		methods = {};
 
 	return Base.extend({
 		/**
@@ -53,9 +25,9 @@ var Guest = function () {
 		 * @param  {Function} callback Function to call on save
 		 */
 		save: function (callback) {
-			methods.getCollection(function (err, collection, db) {
+			Database.getCollection(function (err, collection) {
 				collection.update({email: properties.email}, {$set: properties}, {upsert: true}, function (err, result) {
-					db.close();
+					Database.close();
 					if (callback && typeof callback === 'function') {
 						callback();
 					}
@@ -69,7 +41,7 @@ var Guest = function () {
 		 * @param  {Function} callback Function to execute after load
 		 */
 		load: function (id, callback) {
-			methods.getCollection(function (err, collection, db) {
+			Database.getCollection(function (err, collection) {
 				collection.findOne({email: id}, function (err, item) {
 					var key;
 					if (!err) {
@@ -79,7 +51,7 @@ var Guest = function () {
 							}
 						}
 					}
-					db.close();
+					Database.close();
 					if (callback && typeof callback === 'function') {
 						callback();
 					}
