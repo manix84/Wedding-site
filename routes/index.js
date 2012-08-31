@@ -7,10 +7,10 @@ exports.index = function (req, res) {
 	var guests = require('../guests.json'),
 		email = req.query.e || '',
 		templateVars = {
-			title: 'Wedding'
+			date: '11th October 2013'
 		};
 
-	var guestModel = require('../models/Guest');
+	/*var guestModel = require('../models/Guest');
 	var guest = guestModel();
 	guest.set('email', 'richmiddleditch@gmail.com');
 
@@ -23,6 +23,6 @@ exports.index = function (req, res) {
 	// Data model
 	if (guests[email]) {
 		templateVars.guest = guests[email];
-	}
+	}*/
 	res.render('index', templateVars);
 };
