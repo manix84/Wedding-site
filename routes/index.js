@@ -10,6 +10,16 @@ exports.index = function (req, res) {
 			title: 'Wedding'
 		};
 
+	var guestModel = require('../models/Guest');
+	var guest = guestModel();
+	guest.set('email', 'richmiddleditch@gmail.com');
+
+	guest.save();
+
+	var guest2 = guestModel();
+	guest2.load('richmiddleditch@gmail.com');
+	var email2 = guest2.get('email');
+
 	// Data model
 	if (guests[email]) {
 		templateVars.guest = guests[email];

@@ -1,4 +1,8 @@
 var Guest = function () {
+	if (!this instanceof Guest) {
+		return new Guest();
+	}
+
 	/**
 	 * Private properties
 	 * @type {Object}
@@ -21,43 +25,21 @@ var Guest = function () {
 
 	return Base.extend({
 		/**
-		 * Save a Guest object into the database
-		 * @param  {Function} callback Function to call on save
-		 */
-		save: function (callback) {
-			Database.getCollection(function (err, collection) {
-				collection.update({email: properties.email}, {$set: properties}, {upsert: true}, function (err, result) {
-					Database.close();
-					if (callback && typeof callback === 'function') {
-						callback();
-					}
-				});
-			});
-		},
+         * Save an object into the database
+         * @param  {Function} callback Function to call on save
+         */
+        save: function (callback) {
+			this._save({email: properties.email}, callback);
+        },
 
-		/**
-		 * Load a Guest from the database
-		 * @param  {String}   id       Email address of the guest to load
-		 * @param  {Function} callback Function to execute after load
-		 */
-		load: function (id, callback) {
-			Database.getCollection(function (err, collection) {
-				collection.findOne({email: id}, function (err, item) {
-					var key;
-					if (!err) {
-						for (key in item) {
-							if (properties.hasOwnProperty(key)) {
-								properties[key] = item[key];
-							}
-						}
-					}
-					Database.close();
-					if (callback && typeof callback === 'function') {
-						callback();
-					}
-				});
-			});
-		},
+        /**
+         * Load an from the database
+         * @param  {String}   id       Email address of the guest to load
+         * @param  {Function} callback Function to execute after load
+         */
+        load: function (id, callback) {
+			this._load({email: id}, callback);
+        },
 
 		/**
 		 * Validates email address and assigns it to the guest
