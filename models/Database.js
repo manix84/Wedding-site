@@ -1,12 +1,23 @@
 var Database = function() {
-    var db = null,
+    var properties = {
+            server: 'localhost',
+            port: 27017,
+            name: 'wedding',
+            collections: {
+                Guest: 'guests'
+            }
+        },
+        db = null,
         mongo = require('mongodb'),
-        server = new mongo.Server('localhost', 27017, {auto_reconnect: true}),
-        dbName = 'wedding';
+        server = new mongo.Server(properties.server, properties.port, {auto_reconnect: true});
 
     return {
+        /**
+         * Get a new database instance
+         * @return {Object} A MongoDB instance
+         */
         getDatabase: function () {
-            db = new mongo.Db(dbName, server);
+            var db = new mongo.Db(properties.name, server);
 
             return db;
         },
@@ -15,13 +26,13 @@ var Database = function() {
          * Get a db collection, creating it if it doesnt exist
          * @param  {Function} callback Callback method to run after getting collection
          */
-        getCollection: function (callback) {
+        getCollection: function (collection, callback) {
             db = db || getDatabase();
 
             db.open(function (err, openDb) {
                 if (!err) {
-                    openDb.createCollection('guests', function (err, collection) {
-                        callback(err, collection);
+                    openDb.createCollection(properties.collections[collection], function (err, coll) {
+                        callback(err, coll);
                     });
                 }
             });
